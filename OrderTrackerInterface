@@ -1,0 +1,39 @@
+import java.util.Queue;
+// OrderTrackerInterface.java
+public interface OrderTrackerInterface {
+    void addOrder(OrderInterface.Order order);
+    String showCurrentOrder();
+    String getNextOrder();
+    boolean skipOrder();
+public class OrderTracker implements OrderTrackerInterface {
+    private Queue<OrderInterface.Order> orders = new LinkedList<>();
+
+    @Override
+    public void addOrder(OrderInterface.Order newOrder) {
+        orders.add(newOrder);
+    }
+
+    @Override
+    public String showCurrentOrder() {
+        if (orders.isEmpty()) {
+            return "No Orders";
+        }
+        return orders.peek().getOrder();
+    }
+
+    @Override
+    public String getNextOrder() {
+        OrderInterface.Order nextOrder = orders.poll();
+        return nextOrder != null ? nextOrder.getOrder() : "No Orders";
+    }
+
+    @Override
+    public boolean skipOrder() {
+        if (orders.isEmpty()) {
+            return false;
+        }
+        OrderInterface.Order currentOrder = orders.poll();
+        return orders.offer(currentOrder);
+    }
+}
+}

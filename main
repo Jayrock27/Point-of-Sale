@@ -1,0 +1,87 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        MenuInterface.Menu menu = new MenuInterface.Menu();
+        OrderTrackerInterface.OrderTracker orderTracker = new OrderTrackerInterface.OrderTracker();
+
+        // Load menu items from a file named "menu.csv"
+        menu.loadMenuItems("menu.csv");
+        
+        // Display the menu to the console
+        System.out.println("Menu:");
+        menu.printMenuItems();
+
+        boolean running = true;
+        while (running) {
+            System.out.println("\n--- Order System ---");
+            System.out.println("1. Place an Order");
+            System.out.println("2. Show Current Order");
+            System.out.println("3. Complete Current Order");
+            System.out.println("4. Skip Current Order");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1:
+                    OrderInterface.Order order = new OrderInterface.Order();
+                    boolean ordering = true;
+                    while (ordering) {
+                        System.out.println("\n--- Place Order ---");
+                        menu.printMenuItems();
+                        System.out.print("Enter item index to add to order (or -1 to finish): ");
+                        int itemIndex = scanner.nextInt();
+                        if (itemIndex == -1) {
+                            ordering = false;
+                        } else if (itemIndex >= 0 && itemIndex < menu.getNumberOfItems()) {
+                            Item item = menu.getMenuItem(itemIndex);
+                            order.addItem(item);
+                            System.out.println("Added: " + item);
+                        } else {
+                            System.out.println("Invalid index. Please try again.");
+                        }
+                    }
+                    orderTracker.addOrder(order);
+                    System.out.println("Order placed successfully.");
+                    break;
+                
+                case 2:
+                    System.out.println("\n--- Current Order ---");
+                    System.out.println(orderTracker.showCurrentOrder());
+                    break;
+                
+                case 3:
+                    System.out.println("\n--- Completing Current Order ---");
+                    String completedOrder = orderTracker.getNextOrder();
+                    if (completedOrder.equals("No Orders")) {
+                        System.out.println("No orders to complete.");
+                    } else {
+                        System.out.println("Completed Order:\n" + completedOrder);
+                    }
+                    break;
+
+                case 4:
+                    System.out.println("\n--- Skipping Current Order ---");
+                    if (orderTracker.skipOrder()) {
+                        System.out.println("Order skipped.");
+                    } else {
+                        System.out.println("No orders to skip.");
+                    }
+                    break;
+                
+                case 5:
+                    System.out.println("Exiting the system. Goodbye!");
+                    running = false;
+                    break;
+                
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+        }
+        scanner.close();
+    }
+}

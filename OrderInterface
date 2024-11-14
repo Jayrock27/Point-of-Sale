@@ -1,0 +1,29 @@
+import java.util.LinkedList;
+// OrderInterface.java
+public interface OrderInterface {
+    boolean addItem(Item item);
+    double getTotal();
+    String getOrder();
+public class Order implements OrderInterface {
+    private LinkedList<Item> items = new LinkedList<>();
+
+    @Override
+    public boolean addItem(Item item) {
+        return items.add(item);
+    }
+
+    @Override
+    public double getTotal() {
+        return items.stream().mapToDouble(Item::getPrice).sum();
+    }
+
+    @Override
+    public String getOrder() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = items.size() - 1; i >= 0; i--) {
+            sb.append(items.get(i).toString()).append("\n");
+        }
+        return sb.toString().trim();
+    }
+}
+}
